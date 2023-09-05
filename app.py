@@ -51,7 +51,11 @@ def moban_map():
     return render_template('mooban_map.html', plot=fig.to_html(full_html=False))
 
 
+# if __name__ == '__main__':
+#     host = '113.53.253.56'
+#     port = 5000
+#     app.run(host=host, port=port, debug=True)
+
 if __name__ == '__main__':
-    host = '113.53.253.56'
     port = 8088
-    app.run(host=host, port=port)
+    app.run(host='0.0.0.0', port=port, debug=True)
