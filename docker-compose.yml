@@ -1,0 +1,62 @@
+version: '3'
+
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres
+    container_name: waterbalance_db  # Optional: Set a specific container name
+    volumes:
+      - db_data:/var/lib/postgresql/data  # Mount a volume for database data
+      - ./system_configuration.py:/docker-entrypoint-initdb.d/system_configuration.py
+    restart: always
+    ports:
+      - '5432:5432'  # Map host port 5432 to container port 5432
+    environment:    
+      POSTGRES_PASSWORD: POSTGRES_PASSWORD
+    networks:
+      - pgsite
+
+  # pgAdmin 4
+  pg4:
+    image: dpage/pgadmin4
+    container_name: pgadmin4  # Optional: Set a specific container name
+    
+    depends_on:
+      - db  # Ensure the database service is ready before starting pgAdmin
+    restart: always
+    ports:
+      - '8080:80'  # Map host port 8080 to container port 80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: PGADMIN_DEFAULT_EMAIL  # Set the pgAdmin email
+      PGADMIN_DEFAULT_PASSWORD: DATABASE_PASSWORD  # Set the pgAdmin password
+    networks:
+      - pgsite
+
+  # Flask API
+  flask-api:
+    build:
+      context: ./flask-api  # Specify the directory containing the Dockerfile
+      dockerfile: Dockerfile  # Path to your Dockerfile within the context
+    container_name: flask-api  # Optional: Set a specific container name
+    ports:
+      - '113.53.253.56:5000:5000'  # Map host port 5000 to container port 80
+    volumes:
+      - ./flask-api:/app  # Mount the current directory (for code) to /app in the container
+      - ./system_configuration.py:/app/system_configuration.py
+      - type: bind
+        source: ./system_configuration.py
+        target: /shared_data
+    depends_on:
+      - db  # Ensure the database service is ready before starting the Flask API
+    environment:
+      - CPLUS_INCLUDE_PATH=/usr/include/gdal  # Set environment variables
+      - C_INCLUDE_PATH=/usr/include/gdal
+    networks:
+      - pgsite
+
+networks:
+  pgsite:
+
+volumes:
+  db_data:  # Define a volume for the database data
+  shared_data: 

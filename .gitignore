@@ -1,4 +1,4 @@
-config.py
-deploy.yml
-requirements.txt
+flask-api/config.py
+flask-api/requirements.txt
 readme.txt
+system_configuration.py

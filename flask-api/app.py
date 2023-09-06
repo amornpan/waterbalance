@@ -4,8 +4,8 @@ import plotly.express as px
 import geopandas as gpd
 
 app = Flask(__name__)
-# Load configuration from config.py
-app.config.from_pyfile('config.py')
+# Load configuration 
+app.config.from_pyfile('system_configuration.py')
 Bootstrap(app)
 
 # Access configuration values
@@ -15,8 +15,12 @@ db_username = app.config['DB_USERNAME']
 db_password = app.config['DB_PASSWORD']
 
 
-@app.route('/moban_map')
-def moban_map():
+@app.route('/')
+def index():
+    return "Water Balance"
+
+@app.route('/mooban_map')
+def mooban_map():
     # Read the shapefile
     gdf_mooban = gpd.read_file(
         'static/boundary_mooban_ll/boundary_mooban_ll.shp', encoding='cp874')
@@ -57,5 +61,5 @@ def moban_map():
 #     app.run(host=host, port=port, debug=True)
 
 if __name__ == '__main__':
-    port = 8088
+    port = 5000
     app.run(host='0.0.0.0', port=port, debug=True)

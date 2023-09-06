@@ -29,8 +29,9 @@ COPY requirements.txt .
 # Install Python dependencies from requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of your application code into the container
-COPY . .
+
+# # Copy the rest of your application code into the container
+# COPY . .
 
 # Specify the command to run your application
 CMD ["python3", "app.py"]
