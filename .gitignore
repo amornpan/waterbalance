@@ -2,3 +2,4 @@ flask-api/config.py
 flask-api/requirements.txt
 readme.txt
 system_configuration.py
+notebook/notebook_config.py

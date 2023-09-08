@@ -1,6 +1,25 @@
 version: '3'
 
 services:
+  
+  # Jupyter Notebook
+  jupyter-notebook:
+    build:
+      context: ./notebook  # Specify the directory containing the Dockerfile
+      dockerfile: Dockerfile  # Path to your Dockerfile within the context
+    container_name: jupyter-notebook  # Optional: Set a specific container name
+    ports:
+      - '113.53.253.56:8888:8888'  # Map host port 8888 to container port 8888
+    volumes:
+      - ./notebook:/notebooks  # Mount the current directory (for notebooks) to /notebooks in the container
+      #- ./system_configuration.py:/etc/jupyter/system_configuration.py
+      - ./notebook/notebook_config.py:/etc/jupyter/notebook_config.py
+
+    depends_on:
+      - db  # Ensure the database service is ready before starting Jupyter Notebook
+    networks:
+      - pgsite
+
   # PostgreSQL Database
   db:
     image: postgres
