@@ -20,6 +20,52 @@ db_password = app.config['DB_PASSWORD']
 def index():
     return "Water Balance"
 
+@app.route('/geo_map')
+def geo_map():
+    # Read the GeoDataFrame from a JSON file
+    geo_df = gpd.read_file('geo_output.json')
+
+    # Calculate the center of the GeoDataFrame
+    center_lat = geo_df.geometry.centroid.y.mean()
+    center_lon = geo_df.geometry.centroid.x.mean()
+
+    # Calculate the bounds of the GeoDataFrame
+    min_lat, max_lat = geo_df.geometry.bounds['miny'].min(), geo_df.geometry.bounds['maxy'].max()
+    min_lon, max_lon = geo_df.geometry.bounds['minx'].min(), geo_df.geometry.bounds['maxx'].max()
+
+    # Set the zoom level based on the bounds
+    zoom = 8.45  # You can adjust this value to your preference
+
+    # Create a map with Plotly Express and Mapbox for geo_df
+    fig = px.choropleth_mapbox(
+        geo_df,
+        geojson=geo_df.geometry,
+        locations=geo_df.index,  # Use the index as locations
+        color=geo_df['NAME'],  # Replace with the column you want to color by
+        hover_name='NAME',  # Replace with the column for hover text
+        title="Interactive Map for geo_df",
+        center={"lat": center_lat, "lon": center_lon},  # Center the map
+        mapbox_style="carto-positron",  # Choose a Mapbox style
+        zoom=zoom
+    )
+
+    # Set the figure size to fit the map content
+    fig.update_layout(
+        mapbox=dict(
+            center={"lat": center_lat, "lon": center_lon},
+            style="carto-positron",
+            zoom=zoom,
+        ),
+        autosize=True,
+        margin={"r": 0, "t": 0, "l": 0, "b": 0}
+    )
+
+    # Convert the Plotly figure to HTML
+    plot_html = fig.to_html(full_html=False)
+
+    # Render the map on an HTML template
+    return render_template('geo_map.html', plot=fig.to_html(full_html=False))
+
 
 @app.route('/mooban_map')
 def mooban_map():
