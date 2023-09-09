@@ -1,0 +1,4 @@
+pandas==2.1.0
+plotly==5.16.1
+cython
+geopandas==0.13.2

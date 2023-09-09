@@ -13,8 +13,11 @@ services:
     volumes:
       - ./notebook:/notebooks  # Mount the current directory (for notebooks) to /notebooks in the container
       #- ./system_configuration.py:/etc/jupyter/system_configuration.py
-      - ./notebook/notebook_config.py:/etc/jupyter/notebook_config.py
+      #- ./notebook/notebook_config.py:/etc/jupyter/notebook_config.py
 
+    env_file:
+      - .env  # Use the .env file for environment variables 
+      
     depends_on:
       - db  # Ensure the database service is ready before starting Jupyter Notebook
     networks:
